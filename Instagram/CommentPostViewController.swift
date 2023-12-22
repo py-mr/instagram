@@ -14,6 +14,7 @@ class CommentPostViewController: UIViewController {
     @IBOutlet weak var commentTextField: UITextField!
     @IBOutlet weak var errorLabel: UILabel!
     var postId = ""
+    var postCommentData:PostData!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,7 +38,7 @@ class CommentPostViewController: UIViewController {
         sender.layer.borderColor = UIColor.lightGray.cgColor
         sender.layer.borderWidth = 1.0
     }
-    
+
     
     @IBAction func commentPostButton(_ sender: Any) {
         //コメントの文字数バリデーションチェック
@@ -52,11 +53,32 @@ class CommentPostViewController: UIViewController {
             commentTextField.layer.borderColor = UIColor.lightGray.cgColor
             errorLabel.text = ""
         
-        // 投稿データの保存場所を定義する
-        //Const.swiftで定義した CommentPathを collection(_:)メソッドの引数に指定することで、Firestoreの "comments"フォルダに新しい投稿データを保存するよう指定
-        let commentRef = Firestore.firestore().collection(Const.CommentPath).document()
         // HUDで投稿処理中の表示を開始
         SVProgressHUD.show()
+            
+        // FireStoreに投稿データを保存する
+        let name = Auth.auth().currentUser?.displayName
+        // タップされたインデックスのデータを取得する（HomeViewから）
+        let postData = postCommentData
+        // commentsに更新データを書き込む
+        let postRef = Firestore.firestore().collection(Const.PostPath).document(postData!.id)
+        postRef.updateData([
+            "comments": FieldValue.arrayUnion([[
+                "name": name!,
+                "comment": self.commentTextField.text!
+            ]])
+        ])
+            
+        // HUDで投稿完了を表示する
+        SVProgressHUD.showSuccess(withStatus: "投稿しました")
+        // 投稿処理が完了したので先頭画面に戻る
+        self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+            
+        // 投稿データの保存場所を定義する
+        //Const.swiftで定義した CommentPathを collection(_:)メソッドの引数に指定することで、Firestoreの "comments"フォルダに新しい投稿データを保存するよう指定
+        /*
+        let commentRef = Firestore.firestore().collection(Const.CommentPath).document()
+
         // FireStoreに投稿データを保存する
         let name = Auth.auth().currentUser?.displayName
         let commentDic = [
@@ -67,10 +89,7 @@ class CommentPostViewController: UIViewController {
         ] as [String : Any]
         commentRef.setData(commentDic)
         print("これ！", commentDic)
-        // HUDで投稿完了を表示する
-        SVProgressHUD.showSuccess(withStatus: "投稿しました")
-        // 投稿処理が完了したので先頭画面に戻る
-        self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+        */
         
         }
     }

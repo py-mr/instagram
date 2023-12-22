@@ -14,8 +14,6 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @IBOutlet weak var tableView: UITableView!
     // 投稿データを格納する配列
     var postArray: [PostData] = []
-    //コメントデータを格納する配列
-    var commentArray: [CommentData] = []
     //各投稿データに対するコメントデータを格納する配列（postId, name:コメント; name:コメント; name:コメント）
     var eachCommentArray: [String] = []
     
@@ -57,6 +55,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 // TableViewの表示を更新する
                 self.tableView.reloadData()
             }
+            /*
             // listenerを登録してコメントデータの更新を監視する
             let commentsRef = Firestore.firestore().collection(Const.CommentPath).order(by: "date", descending: true)
             listener = commentsRef.addSnapshotListener() { (querySnapshot, error) in
@@ -87,6 +86,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 //eachCommentArrayをString化して、postArrayに入れる。
                 //postArrayを描画するとき、そのeachCommentArray(String)をcommentFieldに描画する！
             }
+             */
         }
     }
     
@@ -104,7 +104,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // セルを取得してデータを設定する
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! PostTableViewCell
-        cell.setPostData(postArray[indexPath.row], commentArray)
+        cell.setPostData(postArray[indexPath.row])
         //cell.setPostData(postArray[indexPath.row], commentArray[indexPath.row])
         //cell.setCommentData(commentArray[indexPath.row])
         //print("おお", commentArray[indexPath.row])
@@ -168,7 +168,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         if segue.identifier == "commentSegue" {
             //segueから遷移先のViewControllerを取得する
             let commentPostViewController:CommentPostViewController = segue.destination as! CommentPostViewController
-            commentPostViewController.postId = postData.id
+            commentPostViewController.postCommentData = postData
         } else {
             //何もない
         }

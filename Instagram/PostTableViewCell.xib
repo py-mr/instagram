@@ -58,8 +58,10 @@
                             <constraint firstAttribute="height" constant="40" id="5Ph-HA-f2o"/>
                             <constraint firstAttribute="width" constant="40" id="eVs-kP-23f"/>
                         </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                        <color key="tintColor" red="0.20000001789999999" green="0.20000001789999999" blue="0.20000001789999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                        <state key="normal" image="bubble"/>
+                        <state key="normal" image="bubble.left" catalog="system"/>
                     </button>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bz4-Mc-RCJ">
                         <rect key="frame" x="30" y="432.33333333333331" width="318" height="241.66666666666669"/>
@@ -104,7 +106,7 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="bubble" width="21.333333969116211" height="21.333333969116211"/>
+        <image name="bubble.left" catalog="system" width="128" height="110"/>
         <image name="like_none" width="40" height="40"/>
     </resources>
 </document>

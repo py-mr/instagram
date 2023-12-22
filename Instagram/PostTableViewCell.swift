@@ -31,7 +31,7 @@ class PostTableViewCell: UITableViewCell {
     
     // PostDataの内容をセルに表示
     //func setPostData(_ postData: PostData) {
-    func setPostData(_ postData: PostData, _ commentArray: [CommentData]) {
+    func setPostData(_ postData: PostData) {
         // 画像の表示
         postImageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
         let imageRef = Storage.storage().reference().child(Const.ImagePath).child(postData.id + ".jpg")
@@ -57,11 +57,17 @@ class PostTableViewCell: UITableViewCell {
         }
         
         //コメントの表示
+        self.commentField.text = "\(postData.comments)"
+        print("こここ", postData.comments)
+        
+        /*
+        //コメントの表示
         for m in commentArray {
             if postData.id == m.postId {
                 self.commentField.text = "\(m.name) : \(m.comment)"
             }
         }
+         */
          
     }
      
