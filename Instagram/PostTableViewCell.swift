@@ -15,7 +15,9 @@ class PostTableViewCell: UITableViewCell {
     @IBOutlet weak var likeLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var captionLabel: UILabel!
+    @IBOutlet weak var commentButton: UIButton!
     
+    @IBOutlet weak var commentField: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -28,7 +30,8 @@ class PostTableViewCell: UITableViewCell {
     }
     
     // PostDataの内容をセルに表示
-    func setPostData(_ postData: PostData) {
+    //func setPostData(_ postData: PostData) {
+    func setPostData(_ postData: PostData, _ commentArray: [CommentData]) {
         // 画像の表示
         postImageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
         let imageRef = Storage.storage().reference().child(Const.ImagePath).child(postData.id + ".jpg")
@@ -52,6 +55,15 @@ class PostTableViewCell: UITableViewCell {
             let buttonImage = UIImage(named: "like_none")
             self.likeButton.setImage(buttonImage, for: .normal)
         }
+        
+        //コメントの表示
+        for m in commentArray {
+            if postData.id == m.postId {
+                self.commentField.text = "\(m.name) : \(m.comment)"
+            }
+        }
+         
     }
+     
     
 }
