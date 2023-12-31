@@ -9,6 +9,10 @@ import UIKit
 import CLImageEditor
 
 class ImageSelectViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLImageEditorDelegate {
+    
+    var segueId = ""
+    var name = ""
+    var introduction = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,10 +67,18 @@ class ImageSelectViewController: UIViewController, UIImagePickerControllerDelega
     
     // CLImageEditorで加工が終わったときに呼ばれるメソッド
     func imageEditor(_ editor: CLImageEditor!, didFinishEditingWith image: UIImage!) {
-        // 投稿画面を開く
-        let postViewController = self.storyboard?.instantiateViewController(withIdentifier: "Post") as! PostViewController
-        postViewController.image = image!
-        editor.present(postViewController, animated: true, completion: nil)
+        // 投稿画面を開く（タブバーからの場合/Settingからの場合で場合分け）
+        if segueId == "" {
+            let postViewController = self.storyboard?.instantiateViewController(withIdentifier: "Post") as! PostViewController
+            postViewController.image = image!
+            editor.present(postViewController, animated: true, completion: nil)
+        } else {
+            let settingViewController = self.storyboard?.instantiateViewController(withIdentifier: "Setting") as! SettingViewController
+            settingViewController.name = self.name
+            settingViewController.image = image!
+            settingViewController.introduction = self.introduction
+            editor.present(settingViewController, animated: true, completion: nil)
+        }
     }
     
     // CLImageEditorの編集がキャンセルされた時に呼ばれるメソッド

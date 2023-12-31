@@ -40,7 +40,6 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
             // listenerを登録して投稿データの更新を監視する
             let postsRef = Firestore.firestore().collection(Const.PostPath).order(by: "date", descending: true)
             //Postデータが更新されたのをトリガーとしてクロージャが呼び出される。監視するのがリスナーの役割。
-            //postsRef.addSnapshotListener()は1度だけ呼び出される。その結果はlistenerに入る。更新されたら結果が返ってくるので、そしたらクロージャがよびだされる
             listener = postsRef.addSnapshotListener() { (querySnapshot, error) in
                 if let error = error {
                     print("DEBUG_PRINT: snapshotの取得が失敗しました。 \(error)")

@@ -40,7 +40,12 @@ class PostViewController: UIViewController {
         metadata.contentType = "image/jpeg"
         imageRef.putData(imageData!, metadata: metadata) { (metadata, error) in
             if error != nil {
-                // 画像のアップロード失敗
+                // 画像のアップロード失敗 ★投稿データのアップロードが失敗することはないってこと？
+                //⇨失敗するけど。。本来は気にする必要あり。画像と投稿データ別にしているので、どっちかが成功・失敗することがある。
+                //画像失敗したらNOTHING、画像成功しても投稿だけ失敗したら画像だけが出る（一部OK）が、保存はされているが紐づくpostdataがないので、表示はされない。
+                //画像失敗したら画像を消すということも必要。本来画像と投稿データはいっぺんに登録できないといけない。
+                //原子性（アトミック性）:ACID特性。Realmにはトランザクションの概念があるが、外部のAPIの場合はトランザクションの概念を持たせることは難しい
+                //原始星を担保するのは難しい。（一部失敗、画像失敗したときの画像削除も失敗、ということもある）
                 print(error!)
                 SVProgressHUD.showError(withStatus: "画像のアップロードが失敗しました")
                 // 投稿処理をキャンセルし、先頭画面に戻る
