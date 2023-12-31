@@ -11,14 +11,17 @@ import SVProgressHUD
 import FirebaseStorageUI
 
 
-class MyPageViewController: UIViewController {
-
+//class MyPageViewController: UIViewController {
+class MyPageViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+    
+    
     @IBOutlet weak var profileImageView: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        
         // 背景をタップしたらdismissKeyboardメソッドを呼ぶように設定する
         let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         self.view.addGestureRecognizer(tapGesture)
@@ -57,6 +60,26 @@ class MyPageViewController: UIViewController {
         
     }
     
+    //セルの数を指定する
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 140
+        //return pictureLabels.count
+    }
+    //セルの中身を指定する（ここでは背景色を指定）
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MyCell", for: indexPath)
+        
+        // セルのラベルに値をセット。viewWithTagにはタグの番号を指定
+        //let picture = cell.contentView.viewWithTag(1) as! UIImageView
+        //cell.setPostData(MyPostArray[indexPath.row])
+        
+        // セルに枠線をセット
+        cell.layer.borderColor = UIColor.lightGray.cgColor // 外枠の色
+        cell.layer.borderWidth = 1.0 // 枠線の太さ
+        return cell
+    }
+    
     @objc func dismissKeyboard(){
         // キーボードを閉じる
         view.endEditing(true)
@@ -73,3 +96,34 @@ class MyPageViewController: UIViewController {
     */
 
 }
+
+/*
+// 2. テーブルビューに関する設定
+extension MyPageViewController: UICollectionViewDataSource {
+    // 2-1. セクション数
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    // 2-2. セル数
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return pictureLabels.count
+    }
+        
+    // 2-3. セルに値をセット
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // widthReuseIdentifierにはStoryboardで設定したセルのIDを指定
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
+        
+        // セルのラベルに値をセット。viewWithTagにはタグの番号を指定
+        let picture = cell.contentView.viewWithTag(1) as! UIImageView
+        picture.image = pictureLabels[indexPath.row]
+        
+        // セルに枠線をセット
+        cell.layer.borderColor = UIColor.lightGray.cgColor // 外枠の色
+        cell.layer.borderWidth = 1.0 // 枠線の太さ
+        
+        return cell
+    }
+}
+*/

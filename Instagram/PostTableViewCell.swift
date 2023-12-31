@@ -70,6 +70,4 @@ class PostTableViewCell: UITableViewCell {
          */
          
     }
-     
-    
 }
