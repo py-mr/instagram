@@ -368,7 +368,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Odh-2h-4Ic">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Odh-2h-4Ic">
                                 <rect key="frame" x="140" y="155" width="44" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="44" id="4MD-xH-Xsv"/>
@@ -435,31 +435,20 @@
                                 <rect key="frame" x="0.0" y="283" width="393" height="486"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Ez1-dV-dHf">
-                                    <size key="itemSize" width="182" height="196"/>
+                                    <size key="itemSize" width="120" height="120"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" reuseIdentifier="MyCell" id="InF-l6-emm">
-                                        <rect key="frame" x="0.0" y="0.0" width="182" height="196"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="120" height="120"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="nlt-IL-y3s">
-                                            <rect key="frame" x="0.0" y="0.0" width="182" height="196"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="120" height="120"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" tag="1" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wLE-nW-x6v">
-                                                    <rect key="frame" x="0.0" y="0.0" width="182" height="196"/>
-                                                </imageView>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="wLE-nW-x6v" secondAttribute="bottom" id="7pk-ja-Ch6"/>
-                                                <constraint firstItem="wLE-nW-x6v" firstAttribute="leading" secondItem="nlt-IL-y3s" secondAttribute="leading" id="Ati-1l-BS8"/>
-                                                <constraint firstItem="wLE-nW-x6v" firstAttribute="top" secondItem="nlt-IL-y3s" secondAttribute="top" id="VzB-7r-BDk"/>
-                                                <constraint firstAttribute="trailing" secondItem="wLE-nW-x6v" secondAttribute="trailing" id="jXy-gb-jxT"/>
-                                            </constraints>
                                         </collectionViewCellContentView>
-                                        <size key="customSize" width="182" height="196"/>
+                                        <size key="customSize" width="120" height="120"/>
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
@@ -496,6 +485,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="collectionView" destination="Fda-0T-ZhK" id="Opg-ym-hj4"/>
+                        <outlet property="postCount" destination="Odh-2h-4Ic" id="NRa-Ip-ZtP"/>
                         <outlet property="profileImageView" destination="oQp-NK-fbE" id="ffG-7x-cRk"/>
                     </connections>
                 </viewController>
