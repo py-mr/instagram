@@ -45,7 +45,6 @@ class SettingViewController: UIViewController {
                 displayNameTextField.text = user.displayName
                 // 画像の表示
                 profileImageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
-                //let imageRef = Storage.storage().reference().child(Const.ProfileImagePath).child(user.uid + ".jpg")
                 var imageRef = Storage.storage().reference().child(Const.ProfileImagePath)
                 let storageReference = Storage.storage().reference().child(Const.ProfileImagePath).child(user.uid)
                 storageReference.listAll(completion: { result,error in
@@ -61,19 +60,18 @@ class SettingViewController: UIViewController {
                     }
                     self.profileImageView.sd_setImage(with: imageRef)
                 })
-                /*
+                
                 //自己紹介の表示
-                let storageIntroductionReference = Storage.storage().reference().child(Const.ProfileIntroductionPath).child(user.uid)
-                storageIntroductionReference.getMetadata(completion: { result,error in
+                Firestore.firestore().collection(Const.ProfileIntroductionPath).document(user.uid).getDocument(completion: { result,error in
                     if let error = error {
                         print(error)
-                        
+                        return
+                    } else {
+                        let text = result!.data()!["introduction"] as! String
+                        print(text)
+                        self.introductionTextField.text = text
                     }
-                    print("aa", result!)
-                        
                 })
-                //print("aa", storageIntroductionReference)
-                 */
             //imageselectViewから来た場合：そこで選択されたもの
             } else {
                 // 名前の表示（imageSelectViewに渡して、imageSelectViewから返してもらう）

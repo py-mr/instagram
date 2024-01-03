@@ -18,6 +18,7 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
     @IBOutlet weak var postCount: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var profileImageView: UIImageView!
+    @IBOutlet weak var introductionLabel: UILabel!
     
     // 投稿データを格納する配列
     var postArray: [PostData] = []
@@ -53,7 +54,7 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
             navigationItem.title = user.displayName
         }
         
-        //投稿数を取得（画像の数でいいや・・・ん？★）
+        //投稿数を取得（画像の数でいいや・・・★）
         postCount.text = String(postArray.count)
         
         //let date //dateが大きい方を取得
@@ -76,6 +77,18 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
                 self.profileImageView.sd_setImage(with: imageRef)
             })
             
+            //自己紹介の表示
+            Firestore.firestore().collection(Const.ProfileIntroductionPath).document(user.uid).getDocument(completion: { result,error in
+                if let error = error {
+                    print(error)
+                    return
+                } else {
+                    let text = result!.data()!["introduction"] as! String
+                    print(text)
+                    self.introductionLabel.text = text
+                }
+            })
+            
             //投稿データの表示
             // listenerを登録して投稿データの更新を監視する
             let postsRef = Firestore.firestore().collection(Const.PostPath).order(by: "date", descending: true).whereField("name", isEqualTo: user.displayName!)
@@ -84,13 +97,6 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
                     print("DEBUG_PRINT: snapshotの取得が失敗しました。 \(error)")
                     return
                 }
-                // 取得したdocumentをもとにPostDataを作成し、postArrayの配列にする。
-                self.postArray = querySnapshot!.documents.map { document in
-                    let postData = PostData(document: document)
-                    print("DEBUG_PRINT: \(postData.name)")
-                    return postData
-                }
-                
                 // 取得したdocumentをもとにPostDataを作成し、postArrayの配列にする。
                 self.postArray = querySnapshot!.documents.map { document in
                     let postData = PostData(document: document)
@@ -120,16 +126,6 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
         // セルを取得してデータを設定する
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MyCell", for: indexPath) as! MyPostCollectionViewCell
         cell.setPostData(postArray[indexPath.row])
-        /*
-        // Tag番号を使ってインスタンスをつくる
-        let photoImageView = cell.contentView.viewWithTag(1)  as! UIImageView
-        let photoImage = UIImage(named: photos[indexPath.row])
-        photoImageView.image = photoImage
-        // セルに枠線をセット
-        cell.layer.borderColor = UIColor.lightGray.cgColor // 外枠の色
-        cell.layer.borderWidth = 1.0 // 枠線の太さ
-         */
-
         return cell
     }
     
@@ -147,6 +143,7 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return sectionInsets
     }
+    
     // セルの行間の設定
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 10.0
