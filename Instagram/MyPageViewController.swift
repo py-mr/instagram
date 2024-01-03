@@ -78,7 +78,7 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
             
             //投稿データの表示
             // listenerを登録して投稿データの更新を監視する
-            let postsRef = Firestore.firestore().collection(Const.PostPath).order(by: "date", descending: true)
+            let postsRef = Firestore.firestore().collection(Const.PostPath).order(by: "date", descending: true).whereField("name", isEqualTo: user.displayName!)
             listener = postsRef.addSnapshotListener() { (querySnapshot, error) in
                 if let error = error {
                     print("DEBUG_PRINT: snapshotの取得が失敗しました。 \(error)")
@@ -87,7 +87,14 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
                 // 取得したdocumentをもとにPostDataを作成し、postArrayの配列にする。
                 self.postArray = querySnapshot!.documents.map { document in
                     let postData = PostData(document: document)
-                    print("DEBUG_PRINT: \(postData)")
+                    print("DEBUG_PRINT: \(postData.name)")
+                    return postData
+                }
+                
+                // 取得したdocumentをもとにPostDataを作成し、postArrayの配列にする。
+                self.postArray = querySnapshot!.documents.map { document in
+                    let postData = PostData(document: document)
+                    print("DEBUG_PRINT: \(postData.name)")
                     return postData
                 }
                 // TableViewの表示を更新する
