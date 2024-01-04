@@ -21,7 +21,7 @@ class SettingViewController: UIViewController {
     @IBOutlet weak var displayNameTextField: UITextField!
     @IBOutlet weak var profileImageView: UIImageView!
     @IBOutlet weak var introductionTextField: UITextField!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
