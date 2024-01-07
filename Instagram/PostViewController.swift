@@ -53,9 +53,11 @@ class PostViewController: UIViewController {
                 return
             }
             // FireStoreに投稿データを保存する
-            let name = Auth.auth().currentUser?.displayName
+            //let name = Auth.auth().currentUser?.displayName
+            let userId = Auth.auth().currentUser?.uid
             let postDic = [
-                "name": name!,
+                //"name": name!,
+                "userId" : userId!,
                 "caption": self.textField.text!,
                 "date": FieldValue.serverTimestamp(),
                 ] as [String : Any]

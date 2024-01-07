@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseStorageUI
+import FirebaseFirestore
 
 class PostTableViewCell: UITableViewCell {
     
@@ -38,7 +39,21 @@ class PostTableViewCell: UITableViewCell {
         postImageView.sd_setImage(with: imageRef)
 
         // キャプションの表示
-        self.captionLabel.text = "\(postData.name) : \(postData.caption)"
+        //★postData.userIdから、profileDataのnameを取得する
+        print("aaaa", postData.userId)
+        
+        Firestore.firestore().collection(Const.ProfileIntroductionPath).document(postData.userId).getDocument(completion: { result,error in
+            if let error = error {
+                print(error)
+                return
+            } else {
+                let name = result!.data()!["name"] as! String
+                print(name)
+                self.captionLabel.text = name + " : \(postData.caption)"
+            }
+        })
+        
+        //self.captionLabel.text = "\(postData.userId) : \(postData.caption)"
 
         // 日時の表示
         self.dateLabel.text = postData.date

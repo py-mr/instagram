@@ -126,6 +126,7 @@ class LoginViewController: UIViewController {
                         // Profileに更新データを書き込む
                         let profileRef = Firestore.firestore().collection(Const.ProfileIntroductionPath).document(userId)
                         let profileDic = [
+                            "name" : displayName,
                             "introduction": "",
                             ] as [String : Any]
                         profileRef.setData(profileDic)

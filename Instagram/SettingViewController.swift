@@ -17,6 +17,7 @@ class SettingViewController: UIViewController {
     var profileData:ProfileData!
     var name = ""
     var introduction = ""
+    var imageSelectViewController: ImageSelectViewController!
 
     @IBOutlet weak var displayNameTextField: UITextField!
     @IBOutlet weak var profileImageView: UIImageView!
@@ -40,7 +41,7 @@ class SettingViewController: UIViewController {
         //let date //dateが大きい方を取得
         if let user = user {
             //タブバーから来た場合：登録されているもの
-            if self.tabBarController != nil {
+            //if self.tabBarController != nil {
                 // 名前の表示
                 displayNameTextField.text = user.displayName
                 // 画像の表示
@@ -59,6 +60,9 @@ class SettingViewController: UIViewController {
                         }
                     }
                     self.profileImageView.sd_setImage(with: imageRef)
+                    // 角丸にする
+                    self.profileImageView.layer.cornerRadius = self.profileImageView.frame.size.width * 0.5
+                    self.profileImageView.clipsToBounds = true
                 })
                 
                 //自己紹介の表示
@@ -72,8 +76,8 @@ class SettingViewController: UIViewController {
                         self.introductionTextField.text = text
                     }
                 })
-            //imageselectViewから来た場合：そこで選択されたもの
-            } else {
+            //imageselectViewから来た場合：そこで選択されたもの（★ここにこない）
+            /*} else {
                 // 名前の表示（imageSelectViewに渡して、imageSelectViewから返してもらう）
                 displayNameTextField.text = name
                 // 受け取った画像をImageViewに設定する
@@ -81,7 +85,7 @@ class SettingViewController: UIViewController {
                 // 自己紹介の表示（imageSelectViewに渡して、imageSelectViewから返してもらう）
                 introductionTextField.text = introduction
                 
-            }
+            }*/
         }
     }
     
@@ -145,6 +149,7 @@ class SettingViewController: UIViewController {
                         "introduction": self.introductionTextField.text!,
                         ] as [String : Any]*/
                     profileRef.updateData([
+                        "name": self.displayNameTextField.text!,
                         "introduction": self.introductionTextField.text!,
                         ])
                     print(user.uid)
@@ -154,6 +159,7 @@ class SettingViewController: UIViewController {
                     
                     // 投稿処理が完了したので先頭画面に戻る
                     self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+                    
                 }
                 
             }
@@ -174,8 +180,18 @@ class SettingViewController: UIViewController {
     @IBAction func onTapImage(_ sender: Any) {
         // セグエを使用して画面を遷移
         performSegue(withIdentifier: "imageSegue", sender: nil)
+        //profileImageView.image = image
+    
     }
     
+    //画面遷移から戻ってきたときに実行する関数
+    func callBack(image: UIImage) {
+        self.profileImageView.image = image //設定でAspect Fillにした
+        // 角丸にする
+        self.profileImageView.layer.cornerRadius = self.profileImageView.frame.size.width * 0.5
+        self.profileImageView.clipsToBounds = true
+    }
+      
     @IBAction func handleLogoutButton(_ sender: Any) {
         // ログアウトする
         try! Auth.auth().signOut()
@@ -193,9 +209,12 @@ class SettingViewController: UIViewController {
         if segue.identifier == "imageSegue" {
             //segueから遷移先のInputViewControllerを取得する
             let imageSelectViewController:ImageSelectViewController = segue.destination as! ImageSelectViewController
+            imageSelectViewController.parentSettingViewController = self
+            
             imageSelectViewController.segueId = "FromSetting"
             imageSelectViewController.name = displayNameTextField.text!
             imageSelectViewController.introduction = introductionTextField.text!
+
         }
     }
     

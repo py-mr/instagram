@@ -11,7 +11,8 @@ import FirebaseFirestore
 
 class PostData: NSObject {
     var id = ""
-    var name = ""
+    var userId = ""
+    //var name = ""
     var caption = ""
     var date = ""
     var likes: [String] = []
@@ -22,11 +23,15 @@ class PostData: NSObject {
         self.id = document.documentID
 
         let postDic = document.data()
-
+/*
         if let name = postDic["name"] as? String {
             self.name = name
         }
-
+*/
+        if let userId = postDic["userId"] as? String {
+            self.userId = userId
+        }
+            
         if let caption = postDic["caption"] as? String {
             self.caption = caption
         }
@@ -66,6 +71,6 @@ class PostData: NSObject {
     }
 
     override var description: String {
-        return "PostData: name=\(name); caption=\(caption); date=\(date); likes=\(likes.count); id=\(id); comments=\(comments);"
+        return "PostData: userId=\(userId); caption=\(caption); date=\(date); likes=\(likes.count); id=\(id); comments=\(comments);"
     }
 }

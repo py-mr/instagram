@@ -13,6 +13,8 @@ class ImageSelectViewController: UIViewController, UIImagePickerControllerDelega
     var segueId = ""
     var name = ""
     var introduction = ""
+    
+    var parentSettingViewController: SettingViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,17 +69,28 @@ class ImageSelectViewController: UIViewController, UIImagePickerControllerDelega
     
     // CLImageEditorで加工が終わったときに呼ばれるメソッド
     func imageEditor(_ editor: CLImageEditor!, didFinishEditingWith image: UIImage!) {
-        // 投稿画面を開く（タブバーからの場合/Settingからの場合で場合分け）
+        // 投稿画面を開く（ルーティング・・・タブバーからの場合/Settingからの場合で場合分け）
+        // 
         if segueId == "" {
             let postViewController = self.storyboard?.instantiateViewController(withIdentifier: "Post") as! PostViewController
             postViewController.image = image!
             editor.present(postViewController, animated: true, completion: nil)
         } else {
-            let settingViewController = self.storyboard?.instantiateViewController(withIdentifier: "Setting") as! SettingViewController
-            settingViewController.name = self.name
-            settingViewController.image = image!
-            settingViewController.introduction = self.introduction
-            editor.present(settingViewController, animated: true, completion: nil)
+            //let settingViewController = self.storyboard?.instantiateViewController(withIdentifier: "Setting") as! SettingViewController
+            parentSettingViewController?.name = self.name
+            //parentSettingViewController?.image = image!
+            parentSettingViewController?.introduction = self.introduction
+            
+            //editor.present(settingViewController, animated: true, completion: nil)
+            //親のsettingに渡して、picker.dismiss(animated: true, completion: nil)にすればよい。コールバック用のクロージャーをたたく/デリゲートでやる。
+            // CLImageEditor画面を閉じる
+            editor.dismiss(animated: true) {
+                //completionのタイミングでプロパティのクロージャを実行
+                //画面を閉じ終わったタイミングで、settingViewControllerのcallBackメソッドが呼ばれる。
+                self.parentSettingViewController?.callBack(image: image)
+                //ImageSelectViewを閉じる
+                self.dismiss(animated: true, completion: nil)
+            }
         }
     }
     

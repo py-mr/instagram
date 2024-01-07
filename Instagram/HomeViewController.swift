@@ -16,6 +16,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var postArray: [PostData] = []
     //各投稿データに対するコメントデータを格納する配列（postId, name:コメント; name:コメント; name:コメント）
     var eachCommentArray: [String] = []
+    //MyPageViewから来た時
+    var documentId = ""
     
     // Firestoreのリスナー
     var listener: ListenerRegistration?
@@ -53,39 +55,19 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 }
                 // TableViewの表示を更新する
                 self.tableView.reloadData()
-            }
-            /*
-            // listenerを登録してコメントデータの更新を監視する
-            let commentsRef = Firestore.firestore().collection(Const.CommentPath).order(by: "date", descending: true)
-            listener = commentsRef.addSnapshotListener() { (querySnapshot, error) in
-                if let error = error {
-                    print("DEBUG_PRINT: snapshotの取得が失敗しました。 \(error)")
-                    return
-                }
-                // 取得したdocumentをもとにCommentDataを作成し、commentArrayの配列にする。
-                self.commentArray = querySnapshot!.documents.map { document in
-                    let commentData = CommentData(document: document)
-                    print("DEBUG_PRINT: \(commentData)")
-                    return commentData
-                }
-                print("ここ", self.commentArray)
-                /*
-                //commentArrayのうち、同一postidのものを全てeachCommentArray[String]に入れる。
-                var array:[String] = []
-                for i in 0 ..< self.commentArray.count {
-                    array += [self.commentArray[i].comments]
-                }
-                print("ああ", array)
-                array = Array(Set(array)) //コメントがあるpostIdを取得
                 
-                for n in array {
-                    print("おお", n)
+                //もしMyPageViewControllerから来た場合
+                print(self.documentId)
+                for i in 0 ..< self.postArray.count {
+                    if self.postArray[i].id == self.documentId {
+                        print("あああ", self.postArray[i].id)
+                        DispatchQueue.main.async {
+                           let indexPath = IndexPath(row: i, section: 0)
+                           self.tableView.scrollToRow(at: indexPath, at: UITableView.ScrollPosition.top, animated: false)
+                       }
+                    }
                 }
-                 */
-                //eachCommentArrayをString化して、postArrayに入れる。
-                //postArrayを描画するとき、そのeachCommentArray(String)をcommentFieldに描画する！
             }
-             */
         }
     }
     
