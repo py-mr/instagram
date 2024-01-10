@@ -9,6 +9,8 @@ import UIKit
 import FirebaseAuth // 先頭でFirebaseAuthをimportしておく
 
 class TabBarController: UITabBarController, UITabBarControllerDelegate {
+    
+    var homeViewController: HomeViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,6 +46,24 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
             let loginViewController = self.storyboard?.instantiateViewController(withIdentifier: "Login")
             self.present(loginViewController!, animated: true, completion: nil)
         }
+    }
+    
+    func changeHomeAndScroll(to documentId: String) {
+
+        //HomeViewControllerにdocumentIdを渡す
+        //遷移先の情報の取得
+        
+        //これはだめ。ここを抜けるとなくなるし、別物は表示されることはない↓
+        //let homeViewController = storyboard?.instantiateViewController(withIdentifier: "Home") as! HomeViewController
+        //homeViewController?.documentId = documentId
+        //0番目のタブの画面を取り出してそれをHomeViewControllerに型変換する
+        let vc = viewControllers![0] as! HomeViewController
+        //渡したいデータを移動先のViewに渡しておく
+        vc.documentId = documentId
+        //タブの切り替え
+        selectedIndex = 0 //HomeViewControllerの表示をしている。TabBarContollerのプロパティ。
+        print(documentId)
+        
     }
 
 }

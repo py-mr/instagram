@@ -15,6 +15,12 @@ class ImageSelectViewController: UIViewController, UIImagePickerControllerDelega
     var introduction = ""
     
     var parentSettingViewController: SettingViewController?
+    
+    enum TrasitionType {
+        case fromPost
+        case fromSetting
+    }
+    var trasitionType: TrasitionType = .fromPost
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,12 +76,14 @@ class ImageSelectViewController: UIViewController, UIImagePickerControllerDelega
     // CLImageEditorで加工が終わったときに呼ばれるメソッド
     func imageEditor(_ editor: CLImageEditor!, didFinishEditingWith image: UIImage!) {
         // 投稿画面を開く（ルーティング・・・タブバーからの場合/Settingからの場合で場合分け）
-        // 
-        if segueId == "" {
+        //
+        switch trasitionType {
+        case .fromPost:
             let postViewController = self.storyboard?.instantiateViewController(withIdentifier: "Post") as! PostViewController
             postViewController.image = image!
             editor.present(postViewController, animated: true, completion: nil)
-        } else {
+        
+        case .fromSetting:
             //let settingViewController = self.storyboard?.instantiateViewController(withIdentifier: "Setting") as! SettingViewController
             parentSettingViewController?.name = self.name
             //parentSettingViewController?.image = image!

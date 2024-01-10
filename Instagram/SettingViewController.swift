@@ -211,10 +211,10 @@ class SettingViewController: UIViewController {
             let imageSelectViewController:ImageSelectViewController = segue.destination as! ImageSelectViewController
             imageSelectViewController.parentSettingViewController = self
             
-            imageSelectViewController.segueId = "FromSetting"
+            //imageSelectViewController.segueId = "FromSetting"
+            imageSelectViewController.trasitionType = .fromSetting
             imageSelectViewController.name = displayNameTextField.text!
             imageSelectViewController.introduction = introductionTextField.text!
-
         }
     }
     

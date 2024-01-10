@@ -81,19 +81,6 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
                         imageRef = item
                     }
                 }
-                /*
-                self.profileImageView.sd_setImage(with: imageRef)
-                let profileImage = self.profileImageView.image
-                if profileImage != nil {
-                    self.profileImageView.image = profileImage?.trimming()
-                    //self.profileImageView.image = self.profiletrimming(image: profileImage!)
-                    // 角丸にする
-                    self.profileImageView.layer.cornerRadius = self.profileImageView.frame.size.width * 0.5
-                    self.profileImageView.clipsToBounds = true
-                } else {
-                    //何もしない
-                }
-                */
                 self.profileImageView.sd_setImage(with: imageRef, placeholderImage: nil, completion: { (image, error, cacheType, url) in
                     if let error = error {
                         // エラー処理
@@ -115,9 +102,7 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
                 
                 
             })
-            
-            
-            
+
             //自己紹介の表示
             Firestore.firestore().collection(Const.ProfileIntroductionPath).document(user.uid).getDocument(completion: { result,error in
                 if let error = error {
@@ -131,24 +116,39 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
             })
             
             //投稿データの表示
-            // listenerを登録して投稿データの更新を監視する
-            let postsRef = Firestore.firestore().collection(Const.PostPath).order(by: "date", descending: true).whereField("userId", isEqualTo: user.uid)
-            listener = postsRef.addSnapshotListener() { (querySnapshot, error) in
-                if let error = error {
-                    print("DEBUG_PRINT: snapshotの取得が失敗しました。 \(error)")
-                    return
-                }
-                // 取得したdocumentをもとにPostDataを作成し、postArrayの配列にする。
-                self.postArray = querySnapshot!.documents.map { document in
-                    let postData = PostData(document: document)
-                    //print("DEBUG_PRINT: \(postData.name)")
-                    return postData
+            //★userIdがuser.uidである投稿データのドキュメントIDを取得して、それをpostArrayに入れる。
+            //★whereField.getDocumentsにすると"The query requires an index. You can create it here:とでる。
+            //orderよりwherefieldを先にすべき。絞り込んだ後にならびかえるべき。どっちもやってるからエラーになる。クローじゃの中でorderやるべき。whereFieldを2回かけるのはだめなので、その場合はインデックスでやるしかない★
+            self.postArray = []
+            //Firestore.firestore().collection(Const.PostPath).order(by: "date", descending: true).getDocuments() { (querySnapshot, err) in
+            Firestore.firestore().collection(Const.PostPath).whereField("userId", isEqualTo: user.uid).getDocuments() { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    for document in querySnapshot!.documents {
+                        let myPostData = PostData(document: document)
+                        self.postArray += [myPostData]
+                        self.postArray = self.postArray.sorted(by: {
+                            $0.date.compare($1.date) == .orderedDescending
+                        })
+                        /*
+                        if let userId = document.data()["userId"] {
+                            if userId as! String == user.uid {
+                                let mypostData = PostData(document: document)
+                                self.postArray += [mypostData]
+                            } else {
+                                //何もしない
+                            }
+                        }
+                        */
+                    }
                 }
                 // collectionViewの表示を更新する
                 self.collectionView.reloadData()
                 
                 //投稿数を取得（画像の数でいいや・・・★）
                 self.postCount.text = String(self.postArray.count)
+
             }
         }
     }
@@ -202,10 +202,16 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
         //★Homeへ遷移（Segue）。Homeへ値（id）を渡す。Home側では、そのidをもとにindexPath.rowを取得。で、そこにスクロール。
         //★なんでだめなんだ
         //let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "MyPageToHomeSegue") as! HomeViewController
-        //homeViewController.documentId = myPostData!.id
-        performSegue(withIdentifier: "MyPageToHomeSegue", sender: nil)
+        
+        //performSegue(withIdentifier: "MyPageToHomeSegue", sender: nil)
+        //ホーム画面へ、タブ切り替えで遷移
+        let aaa = self.tabBarController as? TabBarController
+        aaa?.changeHomeAndScroll(to: myPostData!.id)
+        //下記だけでも遷移できる。?★
+        //homeViewController?.documentId = myPostData!.id
+        //self.tabBarController?.selectedIndex = 0;
     }
-    
+    /*
     //segueで画面遷移する時に呼ばれる。segueはキックされている。performSegueでどのsegueをキックするかを指定
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "MyPageToHomeSegue" {
@@ -214,7 +220,7 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
             homeViewController.documentId = myPostData!.id
         }
     }
-    
+    */
     
     /*
     // MARK: - Navigation

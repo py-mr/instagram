@@ -17,7 +17,21 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     //各投稿データに対するコメントデータを格納する配列（postId, name:コメント; name:コメント; name:コメント）
     var eachCommentArray: [String] = []
     //MyPageViewから来た時
-    var documentId = ""
+    //var documentId = ""
+    //documentIdに何か入った時に実施
+    var documentId: String = "" { //ストアドプロパティ（非Optionalなら初期値が必要）
+        didSet {
+            for i in 0 ..< self.postArray.count {
+                if self.postArray[i].id == self.documentId {
+                    print("あああ", self.postArray[i].id)
+                    DispatchQueue.main.async {
+                       let indexPath = IndexPath(row: i, section: 0)
+                       self.tableView.scrollToRow(at: indexPath, at: UITableView.ScrollPosition.top, animated: false)
+                   }
+                }
+            }
+        }
+    }
     
     // Firestoreのリスナー
     var listener: ListenerRegistration?
@@ -56,8 +70,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 // TableViewの表示を更新する
                 self.tableView.reloadData()
                 
-                //もしMyPageViewControllerから来た場合
-                print(self.documentId)
+                //MyPageViewControllerから来た場合、選択されたドキュメントIDの投稿までスクロール表示
+                /*
                 for i in 0 ..< self.postArray.count {
                     if self.postArray[i].id == self.documentId {
                         print("あああ", self.postArray[i].id)
@@ -67,6 +81,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
                        }
                     }
                 }
+                 */
             }
         }
     }
