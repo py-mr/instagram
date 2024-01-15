@@ -17,7 +17,10 @@ class PostData: NSObject {
     var date = ""
     var likes: [String] = []
     var isLiked: Bool = false
-    var comments:String = ""
+    //var comments:String = ""
+    var comments: [String] = []
+    var isCaptionOpened:Bool = false
+    var isCommentOpened:Bool = false
 
     init(document: QueryDocumentSnapshot) {
         self.id = document.documentID
@@ -54,6 +57,7 @@ class PostData: NSObject {
             }
         }
         
+        /*
         var commentsLine = ""
         var commentArray:[String] = []
         if let comments = postDic["comments"] as? Array<Any> {
@@ -67,6 +71,19 @@ class PostData: NSObject {
                 commentsLine = commentsLine + commentArray[cm] + "\n"
             }
             self.comments = commentsLine
+        }
+         */
+        var commentArray:[String] = []
+        if let comments = postDic["comments"] as? Array<Any> {
+            // データを1件ずつ抽出
+            for cm in 0 ..< comments.count {
+                let dicData = comments[cm] as! [String : Any]
+                let nameData = dicData["name"] as! String
+                let commentData = dicData["comment"] as! String
+                let array = nameData + " : " + commentData
+                commentArray += [array]
+            }
+            self.comments = commentArray
         }
     }
 

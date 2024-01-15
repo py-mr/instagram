@@ -79,14 +79,23 @@ class LoginViewController: UIViewController {
                 //★errorがnilでなかったら
                 if let error = error {
                     // エラーがあったら原因をprintして、returnすることで以降の処理を実行せずに処理を終了する
-                    SVProgressHUD.showError(withStatus: error.localizedDescription)
-                    //print("DEBUG_PRINT: " + error.localizedDescription)
+                    //SVProgressHUD.showError(withStatus: error.localizedDescription)
+                    print("DEBUG_PRINT: " + error.localizedDescription)
+                    //（★）どっちが間違えているというのはいっちゃダメ。セキュリティ的に。ログインの時は。
+                    if error.localizedDescription == "The email address is badly formatted." {
+                        SVProgressHUD.showError(withStatus: "メールアドレスが正しい形式ではありません。")
+                    } else if error.localizedDescription == "The password must be 6 characters long or more." {
+                        SVProgressHUD.showError(withStatus: "パスワードは6文字以上である必要があります。")
+                    } else if error.localizedDescription == "The email address is already in use by another account." {
+                        SVProgressHUD.showError(withStatus: "入力されたメールアドレスは既に使用されています。")
+                    } else {
+                        SVProgressHUD.showError(withStatus: "予期しないエラーが発生しました。")
+                    }
                     return
                 }
                 print("DEBUG_PRINT: ユーザー作成に成功しました。")
 
                 // 表示名を設定する
-                //★currentUserって、Auth.auth().createUserでクリエイトしてできたuser？
                 let user = Auth.auth().currentUser
                 //★上のuserがnilでなかった場合
                 if let user = user {
@@ -96,7 +105,7 @@ class LoginViewController: UIViewController {
                     changeRequest.commitChanges { error in
                         if let error = error {
                             // プロフィールの更新でエラーが発生
-                            //★PWが6文字以上でないとというのは、バリデーションとして設定してよいか？⇨こっちでやってOK。ただ、FireStore側のに追従しないといけない。追従したくないのでエラー要因は出したくない。”認証時にエラー、、”とか出すだけで。PW要因かどうかも言いたくない。mailAddressTextField.textってのはあんまやるのは。。if文とかにしておいて予期せぬエラーにする
+                            //★PWが6文字以上でないとというのは、バリデーションとして設定してよいか？⇨こっちでやってOK。ただ、FireStore側のに追従しないといけない。追従したくないのでエラー要因は出したくない。”認証時にエラー、、”とか出すだけで。PW要因かどうかも言いたくない。mailAddressTextField.textってのはあんまやるのは。。if文とかにしておいて予期せぬエラーにする（★）
                             SVProgressHUD.showError(withStatus: error.localizedDescription)
                             //print("DEBUG_PRINT: " + error.localizedDescription)
                             return
@@ -107,7 +116,8 @@ class LoginViewController: UIViewController {
                         
                         let userId = (Auth.auth().currentUser?.uid)!
                         let date = getToday()
-                        let imageData = UIImage(systemName: "person.circle.fill")!.withTintColor(UIColor.orange).jpegData(compressionQuality: 0.75)
+                        //let imageData = UIImage(systemName: "person.circle.fill")!.withTintColor(UIColor.orange).jpegData(compressionQuality: 0.75)
+                        let imageData = UIImage(named: "face")?.jpegData(compressionQuality: 0.75)
                         let imageRef = Storage.storage().reference().child(Const.ProfileImagePath).child(userId).child( date + ".jpg")
                         print(date)
                         // Storageに画像をアップロードする

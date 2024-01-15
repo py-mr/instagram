@@ -52,6 +52,24 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
         layout.minimumLineSpacing = 1
         layout.minimumInteritemSpacing = 1
         collectionView.collectionViewLayout = layout
+        
+        /// NotificationCenterを登録
+        NotificationCenter.default.addObserver(self, selector: #selector(initialization), name: .notifyName, object: nil)
+
+    }
+    
+    @objc func initialization(){
+        //プロフ画像を初期化（デフォルトの画像にする）
+        let imageData = UIImage(named: "face")
+        self.profileImageView.image = imageData
+        //投稿数を初期化
+        self.postCount.text = ""
+        //自己紹介文を初期化
+        self.introductionLabel.text = ""
+        //投稿データを初期化
+        self.postArray = []
+        // collectionViewの表示を更新する
+        self.collectionView.reloadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -89,7 +107,7 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
                         // 画像のダウンロードとセットアップが完了した処理
                         if image != nil {
                             //self.myPostImageView.image = self.trimming(image: myPostImage!)
-                            self.profileImageView.image = image?.trimming()
+                            self.profileImageView.image = image?.trimming() //Aspect Fillにすればいいけど、今回はtrimmingでやってみた。
                             // 角丸にする
                             self.profileImageView.layer.cornerRadius = self.profileImageView.frame.size.width * 0.5
                             self.profileImageView.clipsToBounds = true
@@ -116,9 +134,8 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
             })
             
             //投稿データの表示
-            //★userIdがuser.uidである投稿データのドキュメントIDを取得して、それをpostArrayに入れる。
-            //★whereField.getDocumentsにすると"The query requires an index. You can create it here:とでる。
-            //orderよりwherefieldを先にすべき。絞り込んだ後にならびかえるべき。どっちもやってるからエラーになる。クローじゃの中でorderやるべき。whereFieldを2回かけるのはだめなので、その場合はインデックスでやるしかない★
+            //userIdがuser.uidである投稿データのドキュメントIDを取得して、それをpostArrayに入れる。
+            //orderよりwherefieldを先にすべき。絞り込んだ後にならびかえるべき。どっちもやってるからエラーになる。クローじゃの中でorderやるべき。whereFieldを2回かけるのはだめなので、その場合はインデックスでやるしかない。
             self.postArray = []
             //Firestore.firestore().collection(Const.PostPath).order(by: "date", descending: true).getDocuments() { (querySnapshot, err) in
             Firestore.firestore().collection(Const.PostPath).whereField("userId", isEqualTo: user.uid).getDocuments() { (querySnapshot, err) in
@@ -146,7 +163,7 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
                 // collectionViewの表示を更新する
                 self.collectionView.reloadData()
                 
-                //投稿数を取得（画像の数でいいや・・・★）
+                //投稿数を取得（画像の数）
                 self.postCount.text = String(self.postArray.count)
 
             }
@@ -157,11 +174,10 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
         super.viewWillDisappear(animated)
         print("DEBUG_PRINT: viewWillDisappear")
         // listenerを削除して監視を停止する
-        listener?.remove()
-        // TableViewの表示を更新する
-        self.collectionView.reloadData()
+        //listener?.remove()
+        // collectionViewの表示を更新する tabがいつづけるかぎりmypageはいる。
+        //self.collectionView.reloadData()
     }
-    
     //セルの数を指定する
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return postArray.count
@@ -176,6 +192,7 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
     }
     
     /*
+    // UICollectionViewDelegateFlowLayoutを継承させれば読み込む
     // Screenサイズに応じたセルサイズを返す
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 
@@ -194,6 +211,7 @@ class MyPageViewController: UIViewController, UICollectionViewDataSource, UIColl
         return 10.0
     }
      */
+     
     // セルが選択されたときの処理
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // 配列からタップされたインデックスのデータを取り出す

@@ -15,7 +15,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     // 投稿データを格納する配列
     var postArray: [PostData] = []
     //各投稿データに対するコメントデータを格納する配列（postId, name:コメント; name:コメント; name:コメント）
-    var eachCommentArray: [String] = []
+    //var eachCommentArray: [String] = []
     //MyPageViewから来た時
     //var documentId = ""
     //documentIdに何か入った時に実施
@@ -94,6 +94,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print(postArray.count)
         return postArray.count
     }
 
@@ -106,8 +107,35 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //print("おお", commentArray[indexPath.row])
         
         // セル内のボタンのアクションをソースコードで設定する
+        //本来addTarget, handleButtonなどはここでやるべきではない。cellの内容はcell内ですべき。何が押されたよ、というきっかけが知りたいだけなので。。
         cell.likeButton.addTarget(self, action:#selector(handleButton(_:forEvent:)), for: .touchUpInside)
         cell.commentButton.addTarget(self, action:#selector(bubbleButton(_:forEvent:)), for: .touchUpInside)
+        //クロージャの定義。PostTableViewCellで宣言されているonCaptionChangedクロージャをここで定義する。
+        //allCaptionButtonやallCommentButton実行時に、onCaptionChangedクロージャを実行する。
+        //changedCellには押したセルのインスタンス
+        cell.onCaptionChanged = { changedCell in
+            guard let reloadIndexPath = self.tableView.indexPath(for: changedCell) else {
+                return
+            }
+            //フラグを更新する（★）
+            self.postArray[indexPath.row].isCaptionOpened = true
+            //tableViewのうち更新したcellのみリロードする
+            self.tableView.reloadRows(at: [reloadIndexPath], with: .none)
+            
+        }
+        //changedCellには押したセルのインスタンス
+        cell.onCommentChanged = { changedCell in
+            guard let reloadIndexPath = self.tableView.indexPath(for: changedCell) else {
+                return
+            }
+            //フラグを更新する（★）
+            self.postArray[indexPath.row].isCommentOpened = true
+            //tableViewのうち更新したcellのみリロードする
+            self.tableView.reloadRows(at: [reloadIndexPath], with: .none)
+            
+        }
+        //cell.allcaptionPreviewButton.addTarget(self, action:#selector(allCaptionButton(_:forEvent:)), for: .touchUpInside)
+        //cell.allCommentPreviewButton.addTarget(self, action:#selector(allCommentButton(_:forEvent:)), for: .touchUpInside)
 
         return cell
     }

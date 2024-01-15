@@ -21,6 +21,7 @@ class SettingViewController: UIViewController {
 
     @IBOutlet weak var displayNameTextField: UITextField!
     @IBOutlet weak var profileImageView: UIImageView!
+    @IBOutlet weak var registerButton: UIButton!
     @IBOutlet weak var introductionTextField: UITextField!
 
     override func viewDidLoad() {
@@ -32,10 +33,24 @@ class SettingViewController: UIViewController {
         self.view.addGestureRecognizer(tapGesture)
     }
     
+    @objc func textDidChange(_ textField: UITextField) {
+        registerButton.isEnabled = true
+        let image = UIImage(named: "btn") // btnという名前の画像
+        registerButton.setBackgroundImage(image, for: .normal)
+    }
+    
     //アプリを起動したまま別アカウントにログインし直したような場合を考慮して新しいアカウントの表示名をこの画面のUITextFieldに反映する必要があるため、viewDidLoad() ではなく viewWillAppear(_:)で実施
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        registerButton.isEnabled = false
+        registerButton.setBackgroundImage(nil, for: .normal)
+        registerButton.backgroundColor = UIColor.gray
+        
+        //変更を検知したらボタンの色を変える
+        displayNameTextField.addTarget(self,action: #selector(textDidChange),for: .editingChanged)
+        introductionTextField.addTarget(self,action: #selector(textDidChange),for: .editingChanged)
+        
         // 表示名を取得してTextFieldに設定する
         let user = Auth.auth().currentUser
         //let date //dateが大きい方を取得
@@ -190,6 +205,10 @@ class SettingViewController: UIViewController {
         // 角丸にする
         self.profileImageView.layer.cornerRadius = self.profileImageView.frame.size.width * 0.5
         self.profileImageView.clipsToBounds = true
+        
+        registerButton.isEnabled = true
+        let image = UIImage(named: "btn") // btnという名前の画像
+        registerButton.setBackgroundImage(image, for: .normal)
     }
       
     @IBAction func handleLogoutButton(_ sender: Any) {
@@ -202,6 +221,19 @@ class SettingViewController: UIViewController {
 
         // ログイン画面から戻ってきた時のためにホーム画面（index = 0）を選択している状態にしておく
         tabBarController?.selectedIndex = 0
+        
+        // 通知を送りたい箇所でこのように記述
+        NotificationCenter.default.post(name: .notifyName, object: nil)
+        
+        //SettingViewを初期化する
+        //プロフ画像を初期化（デフォルトの画像にする）
+        //let imageData = UIImage(systemName: "person.circle.fill")!.withTintColor(UIColor.orange)
+        let imageData = UIImage(named: "face")
+        self.profileImageView.image = imageData
+        //表示名を初期化
+        self.displayNameTextField.text = ""
+        //自己紹介文を初期化
+        self.introductionTextField.text = ""
     }
     
     //segueで画面遷移する時に呼ばれる。segueはキックされている。performSegueでどのsegueをキックするかを指定
